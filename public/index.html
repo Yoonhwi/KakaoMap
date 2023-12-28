@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="index.css" />
+    <script>
+      async function loadKaKao() {
+        function createScript(src, onload) {
+          const script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = src;
+          document.head.appendChild(script);
+          script.onload = onload;
+        }
+        try {
+          const response = await fetch("/kakao_map_key");
+          const data = await response.json();
+          const kakaoMapApiKey = data.apiKey;
+          createScript(
+            `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapApiKey}&libraries=services&autoload=false`,
+            () => {
+              kakao.maps.load(() => {
+                createScript("./scripts/map.js", () => {
+                  createScript("./scripts/addressList.js", () => {
+                    document.body.appendChild(addressList());
+                  });
+                });
+              });
+            }
+          );
+        } catch (err) {
+          console.log("Error loading Kakao Map API", err);
+        }
+      }
+      loadKaKao();
+    </script>
+    <title>주소 다이어리</title>
+  </head>
+  <body>
+    <script type="text/javascript" src="./scripts/submit.js"></script>
+    <script type="text/javascript" src="./scripts/deleteList.js"></script>
+    <h1>map</h1>
+    <div id="map" style="width: 800px; height: 600px"></div>
+    <form>
+      <input
+        type="text"
+        placeholder="주소지 설명 ex&#41;우리집"
+        id="introduce"
+      /><br />
+      <input type="text" id="postcode" placeholder="우편번호" />
+      <input
+        type="button"
+        onclick="execDaumPostcode()"
+        value="우편번호 찾기"
+      /><br />
+      <input type="text" id="address" placeholder="주소" /><br />
+      <input type="submit" value="제출" onclick="submitForm();return false;" />
+    </form>
+    <div
+      id="layer"
+      style="
+        display: none;
+        position: fixed;
+        overflow: hidden;
+        z-index: 1;
+        -webkit-overflow-scrolling: touch;
+      "
+    >
+      <img
+        src="//t1.daumcdn.net/postcode/resource/images/close.png"
+        id="btnCloseLayer"
+        style="
+          cursor: pointer;
+          position: absolute;
+          right: -3px;
+          top: -3px;
+          z-index: 1;
+        "
+        onclick="closeDaumPostcode()"
+        alt="닫기 버튼"
+      />
+    </div>
+    <input
+      type="button"
+      value="로컬스토리지확인"
+      onclick="console.log(window.localStorage)"
+    />
+    <input
+      type="button"
+      value="로컬스토리지날리기"
+      onclick="window.localStorage.clear();
+      deleteList();
+        map = new kakao.maps.Map(container, options);"
+    />
+    <script type="text/javascript" src="./scripts/addAddress.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  </body>
+</html>

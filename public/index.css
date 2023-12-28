@@ -1,0 +1,19 @@
+#map {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.address_flexBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: aquamarine;
+}
+
+.address_child {
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid #fff;
+  background-color: black;
+  color: #fff;
+}
